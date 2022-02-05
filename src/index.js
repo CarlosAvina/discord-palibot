@@ -4,7 +4,6 @@ import {
   Intents,
   MessageActionRow,
   MessageButton,
-  MessageEmbed,
 } from "discord.js";
 import { bold, userMention } from "@discordjs/builders";
 
