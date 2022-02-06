@@ -1,3 +1,4 @@
+import express from "express";
 import dotenv from "dotenv";
 import { Client, Intents, MessageActionRow, MessageButton } from "discord.js";
 import { bold, userMention } from "@discordjs/builders";
@@ -6,6 +7,7 @@ import minecraft from "./commands/minecraft.js";
 import { script } from "./consts/beemovie.js";
 
 dotenv.config();
+const app = express();
 
 const token = process.env.DISCORD_TOKEN;
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -98,3 +100,18 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 client.login(token);
+
+//For avoidong Heroku $PORT error
+app.set("port", process.env.PORT || 5000);
+
+app
+  .get("/", function (request, response) {
+    var result = "App is running";
+    response.send(result);
+  })
+  .listen(app.get("port"), function () {
+    console.log(
+      "App is running, server is listening on port ",
+      app.get("port")
+    );
+  });
