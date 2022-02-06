@@ -1,12 +1,8 @@
 import dotenv from "dotenv";
-import {
-  Client,
-  Intents,
-  MessageActionRow,
-  MessageButton,
-} from "discord.js";
+import { Client, Intents, MessageActionRow, MessageButton } from "discord.js";
 import { bold, userMention } from "@discordjs/builders";
 
+import minecraft from "./commands/minecraft.js";
 import { script } from "./consts/beemovie.js";
 
 dotenv.config();
@@ -60,6 +56,8 @@ client.on("interactionCreate", async (interaction) => {
         content: "Ruffles vs Currumais",
         components: [row],
       });
+    } else if (commandName === "minecraft") {
+      await minecraft.execute(interaction);
     }
   }
 

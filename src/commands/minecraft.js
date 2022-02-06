@@ -1,18 +1,23 @@
-import { SlashCommandBuilder } from "@discordjs/builders";
-import { PrismaClient } from "@prisma/client";
+import { SlashCommandBuilder, userMention, bold } from "@discordjs/builders";
+import pkg from "@prisma/client";
+
+const { PrismaClient } = pkg;
 
 const prisma = new PrismaClient();
 
-const minecraft = {
+import numberToEmoji from "../utils/numberToEmoji.js";
+import SHAME_GIF_URL from "../consts/shame.js";
+
+const command = {
   name: "minecraft",
   description: "Minecraft commands",
 };
 
-const blame = {
-  name: "blame",
+const shame = {
+  name: "shame",
   description: "Blame user",
   options: [
-    { name: "user", description: "The user to blame" },
+    { name: "user", description: "Shame on you" },
     { name: "description", description: "Description of the incident" },
   ],
 };
@@ -27,21 +32,25 @@ const status = {
   description: "Days without incidents",
 };
 
-export default {
+const minecraft = {
   data: new SlashCommandBuilder()
-    .setName(minecraft.name)
-    .setDescription(minecraft.description)
+    .setName(command.name)
+    .setDescription(command.description)
     .addSubcommand((subcommand) =>
       subcommand
-        .setName(blame.name)
-        .setDescription(blame.description)
+        .setName(shame.name)
+        .setDescription(shame.description)
         .addUserOption((option) =>
-          option.setName("user").setDescription("The user to blame")
+          option
+            .setName("user")
+            .setDescription("Shame on you")
+            .setRequired(true)
         )
         .addStringOption((option) =>
           option
             .setName("description")
             .setDescription("Description of the incident")
+            .setRequired(true)
         )
     )
     .addSubcommand((subcommand) =>
@@ -51,36 +60,70 @@ export default {
       subcommand.setName(status.name).setDescription(status.description)
     ),
   async execute(interaction) {
-    const { commandName, options, reply } = interaction;
-    if (commandName === minecraft.name) {
-      if (options.getSubcommand() === blame.name) {
+    const { commandName, options } = interaction;
+    if (commandName === command.name) {
+      if (options.getSubcommand() === shame.name) {
         const user = options.getUser("user");
+        const userId = user.id;
         const description = options.getString("description");
 
-        await prisma.incidents.create({ data: { user, description } });
-        await reply("Days without incidents in the server: 0");
+        await prisma.incidents
+          .create({ data: { user: userId, description } })
+          .then(async () => {
+            const user = userMention(userId);
+
+            const message = `${bold(
+              "Un nuevo incidente ha ocurrido >:c"
+            )}\n\n${user} fue rostead@ por '${description}'.\n\nDias sin incidentes en minecraft: :zero:\n${SHAME_GIF_URL}`;
+
+            await interaction.reply(message);
+          });
       }
       if (options.getSubcommand() === history.name) {
         const incidents = await prisma.incidents.findMany();
-        await reply(JSON.stringify(incidents));
+
+        if (incidents.length > 0) {
+          let res = "Historial de incidentes\n";
+          incidents.forEach((incident) => {
+            const { id, user, description } = incident;
+
+            const num = numberToEmoji(id);
+            const username = userMention(user);
+
+            res += `${num}. ${username} - ${description}\n`;
+          });
+
+          await interaction.reply(res);
+        } else {
+          await interaction.reply("Aún no hay incidentes :D");
+        }
       }
       if (options.getSubcommand() === status.name) {
-        const [incident] = await prisma.incidents.findMany({
+        const [lastIncident] = await prisma.incidents.findMany({
           take: 1,
           orderBy: {
             createdAt: "desc",
           },
         });
 
-        const incidentDate = new Date(incident.createdAt);
+        if (lastIncident) {
+          const incidentDate = new Date(lastIncident.createdAt);
+          const currentDate = new Date();
 
-        const currentDate = new Date();
+          const timeDifference = currentDate.getTime() - incidentDate.getTime();
+          const daysDifference = Math.floor(
+            timeDifference / (1000 * 60 * 60 * 24)
+          );
 
-        const timeDifference = currentDate.getTime() - incidentDate.getTime();
-        const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+          const emojiNumbers = numberToEmoji(daysDifference);
 
-        await reply(`${daysDifference} days without incidents :D`);
+          await interaction.reply(`${emojiNumbers} dias sin incidentes :D`);
+        } else {
+          await interaction.reply(`Aún no hay incidentes :D`);
+        }
       }
     }
   },
 };
+
+export default minecraft;
