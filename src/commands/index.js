@@ -1,13 +1,13 @@
-import ping from "./ping";
-import serverInfo from "./serverInfo";
-import userInfo from "./userInfo";
-import question from "./question";
-import beeMovie from "./beeMovie";
+import ping from "./ping.js";
+import serverInfo from "./serverInfo.js";
+import userInfo from "./userInfo.js";
+import question from "./question.js";
+import minecraft from "./minecraft.js";
 
 export default {
   ping,
   serverInfo,
   userInfo,
   question,
-  beeMovie,
+  minecraft,
 };
