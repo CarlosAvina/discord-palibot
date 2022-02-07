@@ -1,5 +1,14 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 
-export default new SlashCommandBuilder()
-  .setName("server")
-  .setDescription("Replies with server info!");
+const serverInfo = {
+  data: new SlashCommandBuilder()
+    .setName("server")
+    .setDescription("Replies with server info!"),
+  async execute(interaction) {
+    await interaction.reply(
+      `Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`
+    );
+  },
+};
+
+export default serverInfo;

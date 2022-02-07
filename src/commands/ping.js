@@ -1,5 +1,12 @@
 import { SlashCommandBuilder } from "@discordjs/builders";
 
-export default new SlashCommandBuilder()
-  .setName("ping")
-  .setDescription("Replies with pong!");
+const ping = {
+  data: new SlashCommandBuilder()
+    .setName("ping")
+    .setDescription("Replies with pong!"),
+  async execute(interaction) {
+    await interaction.reply("Pong!");
+  },
+};
+
+export default ping;
