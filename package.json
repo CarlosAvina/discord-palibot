@@ -5,9 +5,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "migrate-db": "npx prisma migrate deploy",
+    "deploy-commands": "node src/scripts/deploy-commands.js",
+    "prestart": "npm run migrate-db && npm run deploy-commands",
     "start": "node src",
     "dev": "nodemon src",
-    "deploy-commands": "node src/scripts/deploy-commands.js",
     "lint": "eslint ."
   },
   "keywords": [],
