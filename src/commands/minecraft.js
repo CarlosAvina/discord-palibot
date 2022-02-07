@@ -84,10 +84,10 @@ const minecraft = {
 
         if (incidents.length > 0) {
           let res = "Historial de incidentes\n";
-          incidents.forEach((incident) => {
-            const { id, user, description } = incident;
+          incidents.forEach((incident, index) => {
+            const { user, description } = incident;
 
-            const num = numberToEmoji(id);
+            const num = numberToEmoji(index + 1);
             const username = userMention(user);
 
             res += `${num}. ${username} - ${description}\n`;
