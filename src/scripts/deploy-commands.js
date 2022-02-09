@@ -5,7 +5,7 @@ dotenv.config();
 
 import commands from "../commands/index.js";
 
-const clientId = process.env.CLIENT_ID;
+const clientId = process.env.DISCORD_CLIENT_ID;
 const guildId = process.env.GUILD_ID;
 const token = process.env.DISCORD_TOKEN;
 
