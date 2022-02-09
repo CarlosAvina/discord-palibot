@@ -1,9 +1,11 @@
 import { SlashCommandBuilder, userMention, bold } from "@discordjs/builders";
-import pkg from "@prisma/client";
+import { initializeApp, cert } from "firebase-admin/app";
+import { getFirestore, Timestamp } from "firebase-admin/firestore";
+import creds from "../../service-account-file.js";
 
-const { PrismaClient } = pkg;
+initializeApp({ credential: cert(creds) });
 
-const prisma = new PrismaClient();
+const db = getFirestore();
 
 import numberToEmoji from "../utils/numberToEmoji.js";
 import SHAME_GIF_URL from "../consts/shame.js";
@@ -67,25 +69,35 @@ const minecraft = {
         const userId = user.id;
         const description = options.getString("description");
 
-        await prisma.incidents
-          .create({ data: { user: userId, description } })
-          .then(async () => {
-            const user = userMention(userId);
+        const data = {
+          user: userId,
+          description,
+          createdAt: Timestamp.fromDate(new Date()),
+        };
 
+        await db
+          .collection("incidents")
+          .doc()
+          .set(data)
+          .then(async () => {
             const message = `${bold(
               "Un nuevo incidente ha ocurrido >:c"
             )}\n\n${user} fue rostead@ por '${description}'.\n\nDias sin incidentes en minecraft: :zero:\n${SHAME_GIF_URL}`;
 
             await interaction.reply(message);
-          });
+          })
+          .catch((err) => console.error(err));
       }
       if (options.getSubcommand() === history.name) {
-        const incidents = await prisma.incidents.findMany();
+        const incidents = await db
+          .collection("incidents")
+          .get()
+          .catch((err) => console.error(err));
 
-        if (incidents.length > 0) {
+        if (!incidents.empty) {
           let res = "Historial de incidentes\n";
-          incidents.forEach((incident, index) => {
-            const { user, description } = incident;
+          incidents.docs.forEach((incident, index) => {
+            const { user, description } = incident.data();
 
             const num = numberToEmoji(index + 1);
             const username = userMention(user);
@@ -99,15 +111,17 @@ const minecraft = {
         }
       }
       if (options.getSubcommand() === status.name) {
-        const [lastIncident] = await prisma.incidents.findMany({
-          take: 1,
-          orderBy: {
-            createdAt: "desc",
-          },
-        });
+        const snapshot = await db
+          .collection("incidents")
+          .orderBy("createdAt", "desc")
+          .limit(1)
+          .get()
+          .catch((err) => console.error(err));
 
-        if (lastIncident) {
-          const incidentDate = new Date(lastIncident.createdAt);
+        if (!snapshot.empty) {
+          const { createdAt } = snapshot.docs[0].data();
+
+          const incidentDate = createdAt.toDate();
           const currentDate = new Date();
 
           const timeDifference = currentDate.getTime() - incidentDate.getTime();

@@ -5,9 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "migrate-db": "npx prisma migrate deploy",
     "deploy-commands": "node src/scripts/deploy-commands.js",
-    "prestart": "npm run migrate-db && npm run deploy-commands",
+    "prestart": "npm run deploy-commands",
     "start": "node src",
     "dev": "nodemon src",
     "lint": "eslint ."
@@ -18,14 +17,14 @@
   "dependencies": {
     "@discordjs/builders": "^0.11.0",
     "@discordjs/rest": "*",
-    "@prisma/client": "^3.9.1",
     "discord-api-types": "^0.26.1",
     "discord.js": "^13.5.0",
-    "dotenv": "^10.0.0"
+    "dotenv": "^10.0.0",
+    "firebase": "^9.6.6",
+    "firebase-admin": "^10.0.2"
   },
   "devDependencies": {
     "eslint": "^8.6.0",
-    "nodemon": "^2.0.15",
-    "prisma": "^3.9.1"
+    "nodemon": "^2.0.15"
   }
 }
