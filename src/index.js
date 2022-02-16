@@ -29,9 +29,9 @@ client.once("ready", () => {
     const tenDaysBeforeDate = new Date("05/26/2022");
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    console.log(`Daily cron was run: ${today}:${hour}`);
-
+    
     const hours = new Date().getHours();
+    console.log(`Daily cron was run: ${today}:${hours}`);
 
     if (hours === 19) {
       if (today < tenDaysBeforeDate) {
