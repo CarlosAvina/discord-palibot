@@ -1,6 +1,11 @@
 import { Client, Collection, Intents } from "discord.js";
 import dotenv from "dotenv";
+import { getFirestore } from "firebase-admin/firestore";
 import commands from "./commands/index.js";
+
+import calculateServerExpiry from "./controllers/severExpiry.js";
+
+const db = getFirestore();
 
 dotenv.config();
 
@@ -15,6 +20,32 @@ for (const command of commands) {
 
 client.once("ready", () => {
   console.log("Palibot preparado");
+
+  const devChannel = client.channels.cache.get("929571416158908436");
+
+  const hour = 1000 * 60 * 60;
+
+  setInterval(async () => {
+    const tenDaysBeforeDate = new Date("05/26/2022");
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const hours = new Date().getHours();
+
+    if (hours === 19) {
+      if (today < tenDaysBeforeDate) {
+        if (today.getDate() % 5 === 0) {
+          await calculateServerExpiry(db, async (embed) => {
+            devChannel.send({ embeds: [embed] });
+          });
+        }
+      } else {
+        await calculateServerExpiry(db, async (embed) => {
+          devChannel.send({ embeds: [embed] });
+        });
+      }
+    }
+  }, hour);
 });
 
 client.on("interactionCreate", async (interaction) => {
