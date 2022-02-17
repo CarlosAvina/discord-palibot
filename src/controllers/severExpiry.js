@@ -1,4 +1,5 @@
 import { MessageEmbed } from "discord.js";
+import logger from "../utils/logger.js";
 
 import returnEmbedColor from "../utils/expiryEmbedColor.js";
 import returnEmbedDescription from "../utils/expiryEmbedDescription.js";
@@ -9,7 +10,7 @@ const calculateServerExpiry = async (db, action) => {
     .collection("expiry")
     .limit(1)
     .get()
-    .catch((err) => console.error(err));
+    .catch((err) => logger.error(err));
 
   if (!snapshot.empty) {
     const { start, expiry } = snapshot.docs[0].data();

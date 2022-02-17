@@ -1,6 +1,7 @@
 import { Client, Collection, Intents } from "discord.js";
 import dotenv from "dotenv";
 import { getFirestore } from "firebase-admin/firestore";
+import logger from "./utils/logger.js";
 import commands from "./commands/index.js";
 
 import calculateServerExpiry from "./controllers/severExpiry.js";
@@ -19,7 +20,7 @@ for (const command of commands) {
 }
 
 client.once("ready", () => {
-  console.log("Palibot preparado");
+  logger.info("Palibot preparado");
 
   const devChannel = client.channels.cache.get("929571416158908436");
 
@@ -29,9 +30,9 @@ client.once("ready", () => {
     const tenDaysBeforeDate = new Date("05/26/2022");
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     const hours = new Date().getHours();
-    console.log(`Daily cron was run: ${today}:${hours}`);
+    logger.info(`Daily cron was run: ${today}:${hours}`);
 
     if (hours === 19) {
       if (today < tenDaysBeforeDate) {
@@ -59,7 +60,7 @@ client.on("interactionCreate", async (interaction) => {
   try {
     await command.execute(interaction);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     await interaction.reply({
       content: "There was an error while executing this command!",
       ephemeral: true,
