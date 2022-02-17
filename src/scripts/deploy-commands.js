@@ -4,6 +4,7 @@ import { Routes } from "discord-api-types/v9";
 dotenv.config();
 
 import commands from "../commands/index.js";
+import logger from "../utils/logger.js";
 
 const clientId = process.env.DISCORD_CLIENT_ID;
 const guildId = process.env.GUILD_ID;
@@ -17,5 +18,5 @@ rest
   .put(Routes.applicationGuildCommands(clientId, guildId), {
     body: commandList,
   })
-  .then(() => console.log("Successfully registered application commands."))
-  .catch(console.error);
+  .then(() => logger.info("Successfully registered application commands."))
+  .catch(logger.error);

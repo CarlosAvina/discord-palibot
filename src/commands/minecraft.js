@@ -2,6 +2,7 @@ import { SlashCommandBuilder, userMention, bold } from "@discordjs/builders";
 import { initializeApp, cert } from "firebase-admin/app";
 import { getFirestore, Timestamp } from "firebase-admin/firestore";
 import creds from "../../service-account-file.js";
+import logger from '../utils/logger.js'
 
 import numberToEmoji from "../utils/numberToEmoji.js";
 import calculateServerExpiry from "../controllers/severExpiry.js";
@@ -98,13 +99,13 @@ const minecraft = {
 
             await interaction.reply(message);
           })
-          .catch((err) => console.error(err));
+          .catch((err) => logger.error(err));
       }
       if (options.getSubcommand() === history.name) {
         const incidents = await db
           .collection("incidents")
           .get()
-          .catch((err) => console.error(err));
+          .catch((err) => logger.error(err));
 
         if (!incidents.empty) {
           let res = "Historial de incidentes\n";
@@ -128,7 +129,7 @@ const minecraft = {
           .orderBy("createdAt", "desc")
           .limit(1)
           .get()
-          .catch((err) => console.error(err));
+          .catch((err) => logger.error(err));
 
         if (!snapshot.empty) {
           const { createdAt } = snapshot.docs[0].data();
