@@ -22,7 +22,7 @@ for (const command of commands) {
 client.once("ready", () => {
   logger.info("Palibot preparado");
 
-  const devChannel = client.channels.cache.get("929571416158908436");
+  const minecraftChannel = client.channels.cache.get("812544927325224980");
 
   const hour = 1000 * 60 * 60;
 
@@ -38,12 +38,12 @@ client.once("ready", () => {
       if (today < tenDaysBeforeDate) {
         if (today.getDate() % 5 === 0) {
           await calculateServerExpiry(db, async (embed) => {
-            devChannel.send({ embeds: [embed] });
+            minecraftChannel.send({ embeds: [embed] });
           });
         }
       } else {
         await calculateServerExpiry(db, async (embed) => {
-          devChannel.send({ embeds: [embed] });
+          minecraftChannel.send({ embeds: [embed] });
         });
       }
     }
