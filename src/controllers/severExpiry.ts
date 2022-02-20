@@ -1,19 +1,27 @@
-import { MessageEmbed } from "discord.js";
-import logger from "../utils/logger.js";
+import { MessageEmbed, ColorResolvable } from "discord.js";
+import {
+  Firestore,
+  QuerySnapshot,
+  DocumentData,
+} from "firebase-admin/firestore";
+import logger from "../utils/logger";
 
-import returnEmbedColor from "../utils/expiryEmbedColor.js";
-import returnEmbedDescription from "../utils/expiryEmbedDescription.js";
-import numberToEmoji from "../utils/numberToEmoji.js";
+import returnEmbedColor from "../utils/expiryEmbedColor";
+import returnEmbedDescription from "../utils/expiryEmbedDescription";
+import numberToEmoji from "../utils/numberToEmoji";
 
-const calculateServerExpiry = async (db, action) => {
-  const snapshot = await db
+const calculateServerExpiry = async (
+  db: Firestore,
+  action: (embed: MessageEmbed) => void
+) => {
+  const snapshot: QuerySnapshot<DocumentData> | void = await db
     .collection("expiry")
     .limit(1)
     .get()
-    .catch((err) => logger.error(err));
+    .catch((err: Error) => logger.error(err));
 
-  if (!snapshot.empty) {
-    const { start, expiry } = snapshot.docs[0].data();
+  if (!snapshot?.empty) {
+    const { start, expiry } = snapshot?.docs[0]?.data() || {};
 
     const currentDate = new Date();
     const startDate = start.toDate();
@@ -36,7 +44,7 @@ const calculateServerExpiry = async (db, action) => {
     const emojiNumbers = numberToEmoji(daysRemaining);
 
     const exampleEmbed = new MessageEmbed()
-      .setColor(returnEmbedColor(place))
+      .setColor(returnEmbedColor(place) as ColorResolvable)
       .setTitle(
         `${daysRemaining === 1 ? "Queda" : "Quedan"} ${emojiNumbers} ${
           daysRemaining === 1 ? "día" : "días"

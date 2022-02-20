@@ -8,8 +8,8 @@
     "deploy-commands": "node dist/src/scripts/deploy-commands.js",
     "build": "tsc",
     "prestart": "npm run deploy-commands",
-    "start": "node dist/src",
-    "dev": "tsc --watch && nodemon src",
+    "start": "tsc && node dist/src",
+    "dev": "tsc --watch && nodemon dist/src",
     "lint": "eslint .",
     "typecheck": "tsc"
   },
