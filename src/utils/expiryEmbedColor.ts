@@ -1,6 +1,6 @@
-import statusColors from "../consts/statusColors.js";
+import statusColors from "../consts/statusColors";
 
-const returnEmbedColor = (place) => {
+const returnEmbedColor = (place: number) => {
   if (place < 10) return statusColors.green;
   if (place < 15) return statusColors.yellow;
 

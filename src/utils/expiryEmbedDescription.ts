@@ -1,6 +1,6 @@
-import statusDescriptions from "../consts/statusDescriptions.js";
+import statusDescriptions from "../consts/statusDescriptions";
 
-const returnEmbedDescription = (place) => {
+const returnEmbedDescription = (place: number) => {
   if (place < 10) return statusDescriptions.green;
   if (place < 13) return statusDescriptions.yellow;
   if (place < 17) return statusDescriptions.red;
