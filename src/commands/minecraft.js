@@ -1,25 +1,19 @@
-import { MessageEmbed, CommandInteraction } from "discord.js";
 import { SlashCommandBuilder, userMention, bold } from "@discordjs/builders";
-import { initializeApp, cert, ServiceAccount } from "firebase-admin/app";
-import {
-  getFirestore,
-  Timestamp,
-  QuerySnapshot,
-  DocumentData,
-} from "firebase-admin/firestore";
-import creds from "../../service-account-file";
-import logger from "../utils/logger";
+import { initializeApp, cert } from "firebase-admin/app";
+import { getFirestore, Timestamp } from "firebase-admin/firestore";
+import creds from "../../service-account-file.js";
+import logger from '../utils/logger.js'
 
-import numberToEmoji from "../utils/numberToEmoji";
-import calculateServerExpiry from "../controllers/severExpiry";
+import numberToEmoji from "../utils/numberToEmoji.js";
+import calculateServerExpiry from "../controllers/severExpiry.js";
 
 initializeApp({
-  credential: cert(creds as ServiceAccount),
+  credential: cert(creds),
 });
 
 const db = getFirestore();
 
-import SHAME_GIF_URL from "../consts/shame";
+import SHAME_GIF_URL from "../consts/shame.js";
 
 const command = {
   name: "minecraft",
@@ -80,12 +74,12 @@ const minecraft = {
     .addSubcommand((subcommand) =>
       subcommand.setName(expiry.name).setDescription(expiry.description)
     ),
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction) {
     const { commandName, options } = interaction;
     if (commandName === command.name) {
       if (options.getSubcommand() === shame.name) {
         const user = options.getUser("user");
-        const userId = user?.id;
+        const userId = user.id;
         const description = options.getString("description");
 
         const data = {
@@ -108,14 +102,14 @@ const minecraft = {
           .catch((err) => logger.error(err));
       }
       if (options.getSubcommand() === history.name) {
-        const incidents: QuerySnapshot<DocumentData> | void = await db
+        const incidents = await db
           .collection("incidents")
           .get()
           .catch((err) => logger.error(err));
 
-        if (!incidents?.empty) {
+        if (!incidents.empty) {
           let res = "Historial de incidentes\n";
-          incidents?.docs?.forEach((incident, index) => {
+          incidents.docs.forEach((incident, index) => {
             const { user, description } = incident.data();
 
             const num = numberToEmoji(index + 1);
@@ -130,15 +124,15 @@ const minecraft = {
         }
       }
       if (options.getSubcommand() === status.name) {
-        const snapshot: QuerySnapshot<DocumentData> | void = await db
+        const snapshot = await db
           .collection("incidents")
           .orderBy("createdAt", "desc")
           .limit(1)
           .get()
           .catch((err) => logger.error(err));
 
-        if (!snapshot?.empty) {
-          const { createdAt } = snapshot?.docs[0]?.data() || {};
+        if (!snapshot.empty) {
+          const { createdAt } = snapshot.docs[0].data();
 
           const incidentDate = createdAt.toDate();
           const currentDate = new Date();
@@ -160,7 +154,7 @@ const minecraft = {
         }
       }
       if (options.getSubcommand() === expiry.name) {
-        await calculateServerExpiry(db, async (embed: MessageEmbed) => {
+        await calculateServerExpiry(db, async (embed) => {
           await interaction.reply({ embeds: [embed] });
         });
       }

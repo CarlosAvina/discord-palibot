@@ -1,10 +1,10 @@
-import { Client, Collection, Intents, CommandInteraction } from "discord.js";
+import { Client, Collection, Intents } from "discord.js";
 import dotenv from "dotenv";
 import { getFirestore } from "firebase-admin/firestore";
-import logger from "./utils/logger";
-import commands from "./commands/index";
+import logger from "./utils/logger.js";
+import commands from "./commands/index.js";
 
-import calculateServerExpiry from "./controllers/severExpiry";
+import calculateServerExpiry from "./controllers/severExpiry.js";
 
 const db = getFirestore();
 
@@ -12,8 +12,7 @@ dotenv.config();
 
 const token = process.env.DISCORD_TOKEN;
 
-// TODO: Fix any type later
-const client: any = new Client({ intents: [Intents.FLAGS.GUILDS] });
+const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 client.commands = new Collection();
 
 for (const command of commands) {
@@ -51,7 +50,7 @@ client.once("ready", () => {
   }, hour);
 });
 
-client.on("interactionCreate", async (interaction: CommandInteraction) => {
+client.on("interactionCreate", async (interaction) => {
   if (!interaction.isCommand()) return;
 
   const command = client.commands.get(interaction.commandName);

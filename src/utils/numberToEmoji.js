@@ -1,6 +1,6 @@
-import EMOJI_NUMBERS from "../consts/emojiNumbers";
+import EMOJI_NUMBERS from "../consts/emojiNumbers.js";
 
-export default function numberToEmoji(number: number) {
+export default function numberToEmoji(number) {
   const stringNumber = String(number);
   const chars = stringNumber.split("");
 
