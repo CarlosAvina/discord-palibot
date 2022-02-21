@@ -1,15 +1,17 @@
 {
   "name": "ovovovo-discord-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "Bot de discord",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "deploy-commands": "node src/scripts/deploy-commands.js",
+    "deploy-commands": "node dist/src/scripts/deploy-commands.js",
+    "build": "tsc",
     "prestart": "npm run deploy-commands",
-    "start": "node src",
-    "dev": "nodemon src",
-    "lint": "eslint ."
+    "start": "tsc && node dist/src",
+    "dev": "tsc --watch && nodemon dist/src",
+    "lint": "eslint .",
+    "typecheck": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +28,7 @@
   },
   "devDependencies": {
     "eslint": "^8.6.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "typescript": "^4.5.5"
   }
 }
