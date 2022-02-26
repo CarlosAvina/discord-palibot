@@ -110,6 +110,7 @@ const minecraft = {
       if (options.getSubcommand() === history.name) {
         const incidents: QuerySnapshot<DocumentData> | void = await db
           .collection("incidents")
+          .orderBy("createdAt", "asc")
           .get()
           .catch((err) => logger.error(err));
 
