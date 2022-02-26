@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "deploy-commands": "node src/scripts/deploy-commands.js",
+    "deploy-commands": "ts-node src/scripts/deploy-commands.ts",
     "prestart": "npm run deploy-commands",
-    "start": "node src",
-    "dev": "nodemon src",
-    "lint": "eslint ."
+    "start": "ts-node src",
+    "dev": "nodemon src/index.ts",
+    "lint": "eslint .",
+    "typecheck": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +26,8 @@
   },
   "devDependencies": {
     "eslint": "^8.6.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.5.0",
+    "typescript": "^4.5.5"
   }
 }
