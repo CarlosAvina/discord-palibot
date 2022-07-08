@@ -23,32 +23,8 @@ for (const command of commands) {
 client.once("ready", () => {
   logger.info("Palibot preparado");
 
-  const minecraftChannel = client.channels.cache.get("812544927325224980");
-
-  const hour = 1000 * 60 * 60;
-
-  setInterval(async () => {
-    const tenDaysBeforeDate = new Date("05/26/2022");
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const hours = new Date().getHours();
-    logger.info(`Daily cron was run: ${today}:${hours}`);
-
-    if (hours === 19) {
-      if (today < tenDaysBeforeDate) {
-        if (today.getDate() % 5 === 0) {
-          await calculateServerExpiry(db, async (embed) => {
-            minecraftChannel.send({ embeds: [embed] });
-          });
-        }
-      } else {
-        await calculateServerExpiry(db, async (embed) => {
-          minecraftChannel.send({ embeds: [embed] });
-        });
-      }
-    }
-  }, hour);
+  const generalChannel = client.channels.cache.get("736044556021137523");
+  generalChannel.send("No me desconenten, por favor...");
 });
 
 client.on("interactionCreate", async (interaction: CommandInteraction) => {
